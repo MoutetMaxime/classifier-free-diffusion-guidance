@@ -38,7 +38,7 @@ The primary objective of this project is to deeply understand the *Classifier-Fr
 
 ### Installation
 ```bash
-git clone https://github.com/<your-username>/classifier-free-guidance-diffusion.git
+git clone https://github.com/MoutetMaxime/classifier-free-guidance-diffusion.git
 cd classifier-free-guidance-diffusion
 pip install -r requirements.txt
 ```
@@ -60,20 +60,14 @@ pip install -r requirements.txt
 
 ---
 
-## 📊 Key Results
-- Improved sample quality compared to baseline diffusion methods.
-- Reduced reliance on external classifiers, simplifying the training pipeline.
-
----
 
 ## 📖 References
 - Original paper: *Classifier-Free Diffusion Guidance* [Ho et al., 2021](https://arxiv.org/abs/2101.04775).
-- Relevant frameworks and libraries: PyTorch, Hugging Face Diffusers, etc.
 
 ---
 
 ## 🙌 Acknowledgments
-Special thanks to Alain Durmus for his guidance throughout the **Generative Models** course, and to École Polytechnique for providing this opportunity to explore cutting-edge AI research.
+Special thanks to Alain Durmus for his guidance throughout the **Generative Models** course.
 
 Feel free to explore this repository and reach out for any questions or collaborations! 🚀
 
