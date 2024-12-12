@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from forward import forward_process
-from utils import alpha_lambda, sigma_lambda
+from utils import compute_alpha_lambda, compute_sigma_lambda
 
 
 class UNet(nn.Module):
@@ -70,8 +70,8 @@ class UNet(nn.Module):
 
                 # Equation (5)
                 real_noise = (
-                    noisy_inputs - alpha_lambda(lambda_) * inputs
-                ) / sigma_lambda(lambda_)
+                    noisy_inputs - compute_alpha_lambda(lambda_) * inputs
+                ) / compute_sigma_lambda(lambda_)
 
                 loss = self.loss_function(noise_prediction, real_noise)
                 loss.backward()
@@ -89,3 +89,10 @@ class UNet(nn.Module):
 
         if verbose:
             print("Finished Training")
+
+
+if __name__ == "__main__":
+    from noise import NoiseConfig
+
+    noiseConfig = NoiseConfig()
+    print(noiseConfig.sample())

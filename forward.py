@@ -3,7 +3,8 @@ import torch
 from utils import (
     compute_alpha_lambda,
     compute_sigma_lambda,
-    compute_sigma_lambda_lambda_prime,
+    compute_sigma_lambda_prime_lambda,
+    compute_mu_lambda_prime_lambda,
 )
 
 
@@ -48,15 +49,52 @@ def forward_transition(z_lambda_prime, lambda_prime, lambda_):
 
     alpha_lambda = compute_alpha_lambda(lambda_)
     alpha_lambda_prime = compute_alpha_lambda(lambda_prime)
-    sigma_lambda_lambda_prime = compute_sigma_lambda_lambda_prime(lambda_, lambda_prime)
+    sigma_lambda_prime_lambda = compute_sigma_lambda_prime_lambda(lambda_, lambda_prime)
 
     noise = torch.randn_like(z_lambda_prime)
 
     z_lambda = (
         alpha_lambda / alpha_lambda_prime
-    ) * z_lambda_prime + sigma_lambda_lambda_prime * noise
+    ) * z_lambda_prime + sigma_lambda_prime_lambda * noise
 
     return z_lambda
+
+
+def conditioned_forward_transition(z_lambda, x, lambda_prime, lambda_):
+    """
+    Transition from one noise level to another, conditioned on the original image.
+
+    Args:
+        z_lambda: Noisy output tensor of shape (B, H, W, C) or (B, H, W).
+        x: Original input tensor of shape (B, H, W, C) or (B, H, W).
+        lambda_: Log signal-to-noise ratio
+        lambda_prime: Log signal-to-noise ratio
+
+    Returns:
+        z_lambda_prime: Noisy output tensor of shape (B, H, W, C) or (B, H, W).
+    """
+    assert lambda_prime > lambda_
+
+    sigma_lambda_prime_lambda = compute_sigma_lambda_prime_lambda(lambda_, lambda_prime)
+
+    noise = torch.randn_like(z_lambda)
+
+    z_lambda_prime = (
+        compute_mu_lambda_prime_lambda(z_lambda, x, lambda_, lambda_prime)
+        + sigma_lambda_prime_lambda * noise
+    )
+
+    return z_lambda_prime
+
+
+def reverse_process_transition(z_lambda, x, lambda_, lambda_prime, v=0.0):
+    mu = compute_mu_lambda_prime_lambda(z_lambda, x, lambda_, lambda_prime)
+    sigma = (
+        compute_sigma_lambda_prime_lambda(lambda_, lambda_prime) ** (1 - v)
+        * compute_sigma_lambda_prime_lambda(lambda_prime, lambda_) ** v
+    )
+
+    return mu + sigma * torch.randn_like(z_lambda)
 
 
 if __name__ == "__main__":
