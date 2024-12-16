@@ -1,4 +1,4 @@
-import torch
+import numpy as np
 
 
 def compute_alpha_lambda(lambda_):
@@ -8,7 +8,7 @@ def compute_alpha_lambda(lambda_):
     Args:
         lambda_: Log signal-to-noise ratio tensor.
     """
-    return torch.sqrt(1 / (1 + torch.exp(-lambda_)))
+    return np.sqrt(1 / (1 + np.exp(-lambda_)))
 
 
 def compute_sigma_lambda(lambda_):
@@ -18,7 +18,7 @@ def compute_sigma_lambda(lambda_):
     Args:
         lambda_: Log signal-to-noise ratio tensor.
     """
-    return torch.sqrt(1 - compute_alpha_lambda(lambda_) ** 2)
+    return np.sqrt(1 - compute_alpha_lambda(lambda_) ** 2)
 
 
 def compute_sigma_lambda_prime_lambda(lambda_, lambda_prime):
@@ -29,7 +29,7 @@ def compute_sigma_lambda_prime_lambda(lambda_, lambda_prime):
         lambdas: Log signal-to-noise ratio tensor.
         lambda_prime: Log signal-to-noise ratio tensor
     """
-    return torch.sqrt((1 - torch.exp(lambda_ - lambda_prime))) * compute_sigma_lambda(
+    return np.sqrt((1 - np.exp(lambda_ - lambda_prime))) * compute_sigma_lambda(
         lambda_prime
     )
 
@@ -43,8 +43,6 @@ def compute_mu_lambda_prime_lambda(
     alpha_lambda = compute_alpha_lambda(lambda_)
     alpha_lambda_prime = compute_alpha_lambda(lambda_prime)
     return (
-        torch.exp(lambda_ - lambda_prime)
-        * (alpha_lambda_prime / alpha_lambda)
-        * z_lambda
-        + (1 - torch.exp(lambda_ - lambda_prime)) * alpha_lambda_prime * x
+        np.exp(lambda_ - lambda_prime) * (alpha_lambda_prime / alpha_lambda) * z_lambda
+        + (1 - np.exp(lambda_ - lambda_prime)) * alpha_lambda_prime * x
     )
