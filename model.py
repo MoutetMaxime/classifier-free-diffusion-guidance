@@ -1,16 +1,17 @@
 import time
-import torch
+
 import numpy as np
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from noise import NoiseConfig
 from forward import forward_process
+from noise import NoiseConfig
 from utils import compute_alpha_lambda, compute_sigma_lambda
 
 
 class UNet(nn.Module):
-    def __init__(self, input_dim, hidden_dim, condition_dim=None, puncond=0.2):
+    def __init__(self, input_dim, hidden_dim, condition_dim=None):
         super(UNet, self).__init__()
         self.hidden_dim = hidden_dim
         self.encoder = nn.Sequential(
@@ -75,7 +76,8 @@ class UNet(nn.Module):
                 labels = labels.to(device)
 
                 lambda_ = diffusion_schedule[np.random.randint(len(diffusion_schedule))]
-                noisy_inputs = forward_process(inputs, lambda_)
+                eps = torch.randn_like(inputs)
+                z_lambda = compute_alpha_lambda(lambda_) * inputs + compute_sigma_lambda(lambda_) * eps
 
                 optimizer.zero_grad()
 
@@ -84,14 +86,9 @@ class UNet(nn.Module):
                     if torch.rand(1).item() < puncond
                     else None
                 )
-                noise_prediction = self(noisy_inputs, condition)
+                noise_prediction = self(z_lambda, condition)
 
-                # Equation (5)
-                real_noise = (
-                    noisy_inputs - compute_alpha_lambda(lambda_) * inputs
-                ) / compute_sigma_lambda(lambda_)
-
-                loss = self.loss_function(noise_prediction, real_noise)
+                loss = self.loss_function(noise_prediction, eps)
                 loss.backward()
                 optimizer.step()
 
