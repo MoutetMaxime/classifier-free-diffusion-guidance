@@ -21,17 +21,32 @@ def compute_sigma_lambda(lambda_):
     return np.sqrt(1 - compute_alpha_lambda(lambda_) ** 2)
 
 
-def compute_sigma_lambda_prime_lambda(lambda_, lambda_prime):
+def compute_sigma_lambda_lambda_prime(lambda_, lambda_prime):
     """
-    Compute sigma of lambda' knowing lambda (Equation 2 and 3)
+    Compute sigma of lambda knowing lambda (Equation 2)
 
     Args:
-        lambdas: Log signal-to-noise ratio tensor.
-        lambda_prime: Log signal-to-noise ratio tensor
+        lambda_: Log signal-to-noise ratio
+        lambda_prime: Log signal-to-noise ratio 
     """
+    # assert lambda_ < lambda_prime
     return np.sqrt((1 - np.exp(lambda_ - lambda_prime))) * compute_sigma_lambda(
-        lambda_prime
+          lambda_
     )
+
+def compute_sigma_lambda_prime_lambda(lambda_prime, lambda_):
+    """
+    Compute sigma of lambda' knowing lambda (Equation 3)
+
+    Args:
+        lambda_prime: Log signal-to-noise ratio
+        lambda_: Log signal-to-noise ratio
+    """
+    assert lambda_ < lambda_prime, f"Assertion failed: lambda_ ({lambda_}) is not less than lambda_prime ({lambda_prime})"
+    return np.sqrt((1 - np.exp(lambda_ - lambda_prime))) * compute_sigma_lambda(
+          lambda_prime
+      )
+
 
 
 def compute_mu_lambda_prime_lambda(
