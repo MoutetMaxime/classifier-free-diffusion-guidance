@@ -1,5 +1,6 @@
 import time
 
+import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
@@ -11,11 +12,10 @@ from utils import (
     compute_alpha_lambda,
     compute_mu_lambda_prime_lambda,
     compute_sigma_lambda,
-    compute_sigma_lambda_prime_lambda,
     compute_sigma_lambda_lambda_prime,
+    compute_sigma_lambda_prime_lambda,
 )
 
-import matplotlib.pyplot as plt
 
 class UNet(nn.Module):
     def __init__(self, input_dim, hidden_dim, condition_dim=None):
@@ -223,8 +223,6 @@ if __name__ == "__main__":
         import torchvision.transforms as transforms
         from torch.utils.data import DataLoader
         from torchvision.datasets import MNIST
-
-
 
         # Normalize the data
         transform = transforms.Compose(
