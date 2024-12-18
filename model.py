@@ -9,8 +9,8 @@ import torch.nn.functional as F
 from noise import NoiseConfig
 from utils import (
     compute_alpha_lambda,
-    compute_sigma_lambda,
     compute_mu_lambda_prime_lambda,
+    compute_sigma_lambda,
     compute_sigma_lambda_prime_lambda,
     compute_sigma_lambda_lambda_prime,
 )
